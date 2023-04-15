@@ -1,0 +1,67 @@
+# By default, Docker names project directory name, names built images {project}_{service}, and names each container {project}_{service}_{index}
+version: "3.8"
+
+services:   
+    app:
+        networks:
+            - mynetwork
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        ports: 
+            - "5000:5000"
+        volumes:
+            - library:/app/library
+            - demucs-input:/app/input
+            - demucs-output:/app/output
+
+    demucs:
+        networks:
+            - mynetwork
+        build:
+            context: .
+            dockerfile: demucs.Dockerfile
+        ports:
+            - "5001:5001"
+        volumes:
+            - demucs-models:/data/models
+            - demucs-input:/data/input
+            - demucs-output:/data/output
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities: [gpu]
+
+    aligner:
+        networks:
+            - mynetwork
+        image: lowerquality/gentle:latest
+        ports:
+            - "8765:8765"
+
+    mongo:
+        networks:
+            - mynetwork
+        image: mongo
+        restart: always
+        ports:
+            - "27017:27017"
+        volumes:
+            - db-data:/data/db
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+            MONGO_INITDB_DATABASE: music
+
+networks:
+    mynetwork:
+
+volumes:
+    demucs-models:
+    demucs-input:
+    demucs-output:
+    library:
+    db-data:
