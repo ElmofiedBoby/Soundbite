@@ -2,22 +2,8 @@
 version: "3.8"
 
 services:   
-    app:
-        networks:
-            - mynetwork
-        build: 
-            context: .
-            dockerfile: Dockerfile
-        ports: 
-            - "5000:5000"
-        volumes:
-            - library:/app/library
-            - demucs-input:/app/input
-            - demucs-output:/app/output
 
     demucs:
-        networks:
-            - mynetwork
         build:
             context: .
             dockerfile: demucs.Dockerfile
@@ -35,16 +21,7 @@ services:
                           count: 1
                           capabilities: [gpu]
 
-    aligner:
-        networks:
-            - mynetwork
-        image: lowerquality/gentle:latest
-        ports:
-            - "8765:8765"
-
     mongo:
-        networks:
-            - mynetwork
         image: mongo
         restart: always
         ports:
@@ -56,12 +33,8 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: example
             MONGO_INITDB_DATABASE: music
 
-networks:
-    mynetwork:
-
 volumes:
     demucs-models:
     demucs-input:
     demucs-output:
-    library:
     db-data:
