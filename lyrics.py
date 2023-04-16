@@ -21,11 +21,11 @@ def change(img1, img2):
 dir = os.path.join(os.getcwd(), 'videos')
 filename = 'lavenderhaze'
 
-delay = 6
+delay = 3
 frames = []
 cap = cv2.VideoCapture(os.path.join(dir, filename+'.mp4'))
 fps = 30
-time_limit = 9 + delay
+time_limit = 20 + delay
 total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 curr_frame_num = 0
 root_frame = None
@@ -50,9 +50,11 @@ while cap.isOpened():
                 root_frame = frame
 
             percentage, diff_mask = change(root_frame, frame)
-
-            if percentage > 30:
+            print(percentage)
+            if percentage > 8:
                 root_frame = frame
+                cv2.imshow('no bg', cv2.resize(root_frame, (854,480), interpolation=cv2.INTER_AREA))
+                cv2.waitKey(0)
 
             diff_img = cv2.bitwise_and(frame, frame, mask=diff_mask)
 
@@ -67,9 +69,9 @@ while cap.isOpened():
             frame_selected = frame & selected_mask
 
             #cv2.imshow('diff', cv2.resize(diff_img, (854,480), interpolation=cv2.INTER_AREA))
-            cv2.imshow('selected', cv2.resize(frame_selected, (854,480), interpolation=cv2.INTER_AREA))
-            cv2.imshow('no bg', cv2.resize(frame_no_background, (854,480), interpolation=cv2.INTER_AREA))
-            cv2.waitKey(0)
+            #cv2.imshow('selected', cv2.resize(frame_selected, (854,480), interpolation=cv2.INTER_AREA))
+            #cv2.imshow('no bg', cv2.resize(frame_no_background, (854,480), interpolation=cv2.INTER_AREA))
+            #cv2.waitKey(0)
             # Apply thresholding to convert the grayscale image to binary
             #_, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
 
