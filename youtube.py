@@ -54,3 +54,6 @@ def download(search_result, audioOnly):
 
     with ytd(ydl_opts) as ydl:
         ydl.download(['https://youtube.com'+search_result['url_suffix']])
+
+result = search('Taylor Swift', 'Love Story', 'Sing King')
+download(result[0], False)
